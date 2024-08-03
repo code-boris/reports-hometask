@@ -1,12 +1,14 @@
-﻿using TaskConsoleApp.Infrastructure;
-using TaskConsoleApp.Interfaces;
+﻿using TaskConsoleApp.Interfaces;
 using TaskConsoleApp.Models;
+using TaskConsoleApp.Resources;
 
 namespace TaskConsoleApp.Services;
 
+/// <inheritdoc />
 public class SessionService(ISessionReader sessionReader, ReportService reportService, ITraceLogger logger) : ISessionService
 {
-    public async Task GenerateReportAsync(string inputFilePath)
+    /// <inheritdoc />
+    public async Task GenerateReportAsync(string? inputFilePath)
     {
         if (!File.Exists(inputFilePath))
         {

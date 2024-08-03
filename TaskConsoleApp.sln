@@ -2,6 +2,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConsoleApp", "src\TaskConsoleApp.csproj", "{88D92B78-4B3A-4113-AC9E-976ED43534AF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B2B9D7C-D88B-484D-A5A9-28EEA5D01386}"
+	ProjectSection(SolutionItems) = preProject
+		assets\test_data_onemonth_shuf.csv = assets\test_data_onemonth_shuf.csv
+		assets\Тестовое задание.docx = assets\Тестовое задание.docx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

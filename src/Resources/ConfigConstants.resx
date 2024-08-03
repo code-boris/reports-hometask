@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="AppSettingsFileName" xml:space="preserve">
+        <value>appsettings.json</value>
+    </data>
+    <data name="AppConfigSection" xml:space="preserve">
+        <value>AppConfig</value>
+    </data>
+    <data name="LogConfigSection" xml:space="preserve">
+        <value>Logging</value>
+    </data>
+    <data name="ConfigAppLoadFailureMessage" xml:space="preserve">
+        <value>Failed to load application configuration from appsettings.json</value>
+    </data>
+    <data name="ConfigLogLoadFailureMessage" xml:space="preserve">
+        <value>Failed to load logging configuration from appsettings.json</value>
+    </data>
+    <data name="NoInputFileFailureMessage" xml:space="preserve">
+        <value>Error: No input file path provided.</value>
+    </data>
+    <data name="FileNotFoundFailureMessage" xml:space="preserve">
+        <value>File not found: '{0}'</value>
+    </data>
+    <data name="ErrorParsingLineFailureMessage" xml:space="preserve">
+        <value>Error parsing line '{0}': '{1}'</value>
+    </data>
+    <data name="ErrorReadingFileFailureMessage" xml:space="preserve">
+        <value>Error reading file '{0}': '{1}'</value>
+    </data>
+    <data name="ErrorOccuredFailureMessage" xml:space="preserve">
+        <value>An error occurred.</value>
+    </data>
+    <data name="DateTimeFormat" xml:space="preserve">
+        <value>dd.MM.yyyy HH:mm:ss</value>
+    </data>
+    <data name="FailedToParseLineWarningMessage" xml:space="preserve">
+        <value>Warning: Failed to parse line '{0}'. Error: '{1}'</value>
+    </data>
+    <data name="WritingTraceToLogMessage" xml:space="preserve">
+        <value>Writing trace log to </value>
+    </data>
+    <data name="UnhandledExceptionMessage" xml:space="preserve">
+        <value>Unhandled Exception: </value>
+    </data>
+    <data name="UnobservedTaskExceptionMessage" xml:space="preserve">
+        <value>Unobserved Exception: </value>
+    </data>
+    <data name="TraceSessionStartingMessage" xml:space="preserve">
+        <value>Trace session starting</value>
+    </data>
+    <data name="ConfiguringServicesFailureMessages" xml:space="preserve">
+        <value>Unable to get serviceProvider from configuring services</value>
+    </data>
+    <data name="SrcFileNotFoundFailureMessage" xml:space="preserve">
+        <value>src folder not found.</value>
+    </data>
+    <data name="ReportService_PrintFirstReport__0_dd_MM_yyyy___1_" xml:space="preserve">
+        <value>{0:dd.MM.yyyy} {1}</value>
+        <comment>Выводит максимум сессий по первому отчёту</comment>
+    </data>
+</root>

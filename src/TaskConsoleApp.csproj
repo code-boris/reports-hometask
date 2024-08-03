@@ -20,4 +20,28 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\ConfigConstants.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Constants.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\StringConstants.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>StringConstants.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\ConfigConstants.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ConfigConstants.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\StringConstants.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>StringConstants.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

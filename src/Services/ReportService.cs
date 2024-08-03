@@ -1,16 +1,27 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
-using TaskConsoleApp.Infrastructure;
+﻿using System.Text.RegularExpressions;
 using TaskConsoleApp.Interfaces;
 using TaskConsoleApp.Models;
+using TaskConsoleApp.Resources;
+using TaskConsoleApp.Utilities;
 
 namespace TaskConsoleApp.Services;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+/// <summary>
+/// Сервис для составления отчётов
+/// </summary>
+/// <param name="logger">Экземпляр логгера</param>
 public partial class ReportService(ITraceLogger logger)
 {
+    /// <summary>
+    /// Регулярное выражение для проверки на полное имя
+    /// </summary>
     private static readonly Regex FullNameRegex = MyRegex();
     
+    /// <summary>
+    /// Сгенерировать первый отчёт
+    /// </summary>
+    /// <param name="sessions">Коллекция сеансов</param>
     public async Task GenerateFirstReportAsync(IEnumerable<Session> sessions)
     {
         var dailySessions = GetDailySessions(sessions);
@@ -21,9 +32,14 @@ public partial class ReportService(ITraceLogger logger)
             MaxConcurrentSessions = GetMaxConcurrentSessions(d.Value).Result
         });
 
-        PrintFirstReport(report);
+        Reports.PrintFirstReport(report);
     }
 
+    /// <summary>
+    /// Группировка сеансов (сессий) по дням, которые они охватывают, с учетом сеансов, которые могут охватывать несколько дней.
+    /// </summary>
+    /// <param name="sessions">Коллекция сеансов</param>
+    /// <returns>Словарь, где ключ - дата, а значение - лист кортежей с датами (начало и конец)</returns>
     private static Dictionary<DateTime, List<(DateTime Start, DateTime End)>> GetDailySessions(IEnumerable<Session> sessions)
     {
         var dailySessions = new Dictionary<DateTime, List<(DateTime Start, DateTime End)>>();
@@ -46,27 +62,26 @@ public partial class ReportService(ITraceLogger logger)
         return dailySessions;
     }
 
-    private static void PrintFirstReport(IEnumerable<dynamic> report)
-    {
-        Console.WriteLine(StringConstants.DateHeader);
-        foreach (var entry in report)
-        {
-            Console.WriteLine($"{entry.Date:dd.MM.yyyy} {entry.MaxConcurrentSessions}");
-        }
-        Console.WriteLine();
-    }
-
+    /// <summary>
+    /// Сгенерировать второй отчёт
+    /// </summary>
+    /// <param name="sessions">Данные по сессиям</param>
     public async Task GenerateSecondReportAsync(IEnumerable<Session> sessions)
     {
         var operatorStates = GetOperatorStates(sessions);
 
-        var columnWidths = GetColumnWidths(operatorStates);
+        var columnWidths = Reports.GetColumnWidths(operatorStates);
 
-        PrintSecondReportHeader(columnWidths);
+        Reports.PrintSecondReportHeader(columnWidths);
 
         PrintSecondReport(operatorStates, columnWidths);
     }
 
+    /// <summary>
+    /// Обработать данные по сессиям (коллекции), чтобы сагрерировать общее время потраченное каждым оператором в различных состояниях (states).
+    /// </summary>
+    /// <param name="sessions">Сессии</param>
+    /// <returns>Словарь, где ключ - имена операторов, а значения - внутренний словарь (ключ - состояния, а значения - кумулятивная длительность)</returns>
     private Dictionary<string, Dictionary<string, TimeSpan>> GetOperatorStates(IEnumerable<Session> sessions)
     {
         var operatorStates = new Dictionary<string, Dictionary<string, TimeSpan>>();
@@ -91,6 +106,10 @@ public partial class ReportService(ITraceLogger logger)
         return operatorStates;
     }
 
+    /// <summary>
+    /// Инициализировать состояния (states) операторов
+    /// </summary>
+    /// <returns>Словарь с ключами как имена, а значения - нулевая длительность</returns>
     private static Dictionary<string, TimeSpan> InitializeOperatorStates()
     {
         return new Dictionary<string, TimeSpan>
@@ -103,41 +122,11 @@ public partial class ReportService(ITraceLogger logger)
         };
     }
 
-    private (int nameWidth, int pauseWidth, int readyWidth, int talkWidth, int processingWidth, int recallWidth) 
-        GetColumnWidths(Dictionary<string, Dictionary<string, TimeSpan>> operatorStates)
-    {
-        var nameWidth = Math.Max(operatorStates.Keys.Select(name => name.Length).Max(), StringConstants.Fio.Length);
-        var pauseWidth = Math.Max(operatorStates.Values.Select(states => 
-            states[StringConstants.Pause].TotalSeconds.ToString(CultureInfo.InvariantCulture).Length).Max(), StringConstants.Pause.Length);
-        var readyWidth = Math.Max(operatorStates.Values.Select(states => 
-            states[StringConstants.Ready].TotalSeconds.ToString(CultureInfo.InvariantCulture).Length).Max(), StringConstants.Ready.Length);
-        var talkWidth = Math.Max(operatorStates.Values.Select(states => 
-            states[StringConstants.Talk].TotalSeconds.ToString(CultureInfo.InvariantCulture).Length).Max(), StringConstants.Talk.Length);
-        var processingWidth = Math.Max(operatorStates.Values.Select(states => 
-            states[StringConstants.Processing].TotalSeconds.ToString(CultureInfo.InvariantCulture).Length).Max(), StringConstants.Processing.Length);
-        var recallWidth = Math.Max(operatorStates.Values.Select(states => 
-            states[StringConstants.Recall].TotalSeconds.ToString(CultureInfo.InvariantCulture).Length).Max(), StringConstants.Recall.Length);
-
-        return (nameWidth, pauseWidth, readyWidth, talkWidth, processingWidth, recallWidth);
-    }
-
-    private static void PrintSecondReportHeader((int nameWidth, int pauseWidth, int readyWidth, int talkWidth, int processingWidth, int recallWidth) columnWidths)
-    {
-        Console.WriteLine(
-            "{0,-" + columnWidths.nameWidth + "} " +
-            "{1," + columnWidths.pauseWidth + "} " +
-            "{2," + columnWidths.readyWidth + "} " +
-            "{3," + columnWidths.talkWidth + "} " +
-            "{4," + columnWidths.processingWidth + "} " +
-            "{5," + columnWidths.recallWidth + "}",
-            StringConstants.Fio,
-            StringConstants.Pause,
-            StringConstants.Ready,
-            StringConstants.Talk,
-            StringConstants.Processing,
-            StringConstants.Recall);
-    }
-
+    /// <summary>
+    /// Напечатать второй отчёт
+    /// </summary>
+    /// <param name="operatorStates">Состояния операторов</param>
+    /// <param name="columnWidths">Ширины столбцов</param>
     private static void PrintSecondReport(Dictionary<string, Dictionary<string, TimeSpan>> operatorStates, 
         (int nameWidth, int pauseWidth, int readyWidth, int talkWidth, int processingWidth, int recallWidth) columnWidths)
     {

@@ -1,92 +1,49 @@
 ﻿using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 using TaskConsoleApp.Interfaces;
-using TaskConsoleApp.Services;
-using TaskConsoleApp.Infrastructure.Logging;
 using TaskConsoleApp.Infrastructure;
+using TaskConsoleApp.Resources;
+using TaskConsoleApp.Utilities;
 
-namespace TaskConsoleApp
+namespace TaskConsoleApp;
+
+internal static class Program
 {
-    internal static class Program
+    internal static async Task<int> Main(string?[] args)
     {
-        internal static async Task<int> Main(string[] args)
-        {
-            SetDefaultCulture();
+        SetDefaultCulture();
+            
+        var serviceProvider = Configuration.ConfigureServices();
+            
+        using var serviceScope = (serviceProvider ?? throw new InvalidOperationException(ConfigConstants.ConfiguringServicesFailureMessages)).CreateScope();
+        var provider = serviceScope.ServiceProvider;
+            
+        var appConfig = provider.GetRequiredService<AppConfig>();
+        var sessionService = provider.GetRequiredService<ISessionService>();
 
-            var serviceProvider = ConfigureServices();
-            
-            using var serviceScope = serviceProvider.CreateScope();
-            var provider = serviceScope.ServiceProvider;
-            
-            var appConfig = provider.GetRequiredService<AppConfig>();
-            var sessionService = provider.GetRequiredService<ISessionService>();
-            
-            string basePath = AppContext.BaseDirectory;
-            string fullPath = Path.Combine(basePath, appConfig.InputFilePath);
-            
-            var inputFilePath = args.Length > 0 ? args[0] : fullPath;
-            
-            try
-            {
-                var fileExists = File.Exists(fullPath);
-                if (!fileExists || string.IsNullOrEmpty(inputFilePath))
-                {
-                    Console.WriteLine(ConfigConstants.NoInputFileFailureMessage);
-                    return await Task.FromException<int>(new InvalidOperationException(ConfigConstants.ErrorOccuredFailureMessage));
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ConfigConstants.ErrorReadingFileFailureMessage, ex.Message, null);
-            }
-            
+        var inputFilePath = PathFiles.GetInputFilePath(args, appConfig);
+
+        if (string.IsNullOrEmpty(inputFilePath))
+        {
+            Console.WriteLine(ConfigConstants.NoInputFileFailureMessage);
+            return await Task.FromException<int>(new InvalidOperationException(ConfigConstants.ErrorOccuredFailureMessage));
+        }
+
+        try
+        {
             await sessionService.GenerateReportAsync(inputFilePath);
-            return await Task.FromResult(1);
+            return 0;
         }
-
-        private static void SetDefaultCulture()
+        catch (Exception ex)
         {
-            Console.InputEncoding = Encoding.Default;
-            Console.OutputEncoding = Encoding.Default;
+            Console.WriteLine(ConfigConstants.ErrorReadingFileFailureMessage, ex.Message, null);
+            return await Task.FromException<int>(ex);
         }
+    }
 
-        private static ServiceProvider ConfigureServices()
-        {
-            var configuration = LoadConfiguration();
-            var appConfig = configuration.GetSection(ConfigConstants.AppConfigSection).Get<AppConfig>();
-            var loggingConfig = configuration.GetSection(ConfigConstants.LogConfigSection).Get<LoggingConfig>();
-
-            if (appConfig == null) 
-                throw new InvalidOperationException(ConfigConstants.ConfigAppLoadFailureMessage);
-
-            if (loggingConfig == null) 
-                throw new InvalidOperationException(ConfigConstants.ConfigLogLoadFailureMessage);
-            
-            var logger = InitializeLogging(appConfig.EnableLogging, loggingConfig.LogFileNameFormat);
-
-            // Setup Dependency Injection
-            return new ServiceCollection()
-                .AddSingleton(appConfig)
-                .AddSingleton(logger)
-                .AddSingleton<ISessionReader, CsvSessionReader>()
-                .AddSingleton<ReportService>()
-                .AddSingleton<ISessionService, SessionService>()
-                .BuildServiceProvider();
-        }
-
-        private static IConfiguration LoadConfiguration()
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(ConfigConstants.AppSettingsFileName, optional: false, reloadOnChange: true);
-            return builder.Build();
-        }
-
-        /// <summary>
-        /// Initialize logging. It's off by default, unless the user passes the --trace flag.
-        /// </summary>
-        private static ITraceLogger InitializeLogging(bool trace, string logFileNameFormat) =>
-            !trace ? new NullLogger() : TraceLogger.Create(string.Format(logFileNameFormat, DateTime.UtcNow));
+    private static void SetDefaultCulture()
+    {
+        Console.InputEncoding = Encoding.Default;
+        Console.OutputEncoding = Encoding.Default;
     }
 }

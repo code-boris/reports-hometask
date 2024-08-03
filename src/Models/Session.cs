@@ -1,16 +1,42 @@
 ﻿using System.Globalization;
-using TaskConsoleApp.Infrastructure;
 using TaskConsoleApp.Interfaces;
+using TaskConsoleApp.Resources;
 
 namespace TaskConsoleApp.Models;
 
+/// <summary>
+/// Сессия
+/// </summary>
 public class Session
 {
+    /// <summary>
+    /// Дата начала сессии
+    /// </summary>
     public DateTime Start { get; }
+    
+    /// <summary>
+    /// Дата окончания сессии
+    /// </summary>
     public DateTime End { get; }
+    
+    /// <summary>
+    /// Название проекта
+    /// </summary>
     public string Project { get; }
+    
+    /// <summary>
+    /// Наименование оператора
+    /// </summary>
     public string Operator { get; }
+    
+    /// <summary>
+    /// Город
+    /// </summary>
     public string State { get; }
+    
+    /// <summary>
+    /// Длительность
+    /// </summary>
     public TimeSpan Duration { get; }
 
     private Session(DateTime start, DateTime end, string project, string @operator, string state, TimeSpan duration)
