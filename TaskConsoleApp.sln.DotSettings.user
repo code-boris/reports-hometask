@@ -6,10 +6,10 @@
     &lt;TestId&gt;xUnit::A920A728-5284-4B83-8EED-8216416980E4::net8.0::UnitTests.CsvSessionReaderTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d5c3fc14_002D9dc9_002D4870_002D90c2_002D7e40d17f4c41/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ReadSessionsAsync_InvalidLine_LogsError" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d5c3fc14_002D9dc9_002D4870_002D90c2_002D7e40d17f4c41/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ReadSessionsAsync_InvalidLine_LogsError" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\User\RiderProjects\reports-hometask\UnitTests" Presentation="&amp;lt;UnitTests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e47ffed8_002D575c_002D4a9d_002Daa68_002Dd20a07073d5d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GenerateReportAsync_InputFileNotExists_LogsError #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e47ffed8_002D575c_002D4a9d_002Daa68_002Dd20a07073d5d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GenerateReportAsync_InputFileNotExists_LogsError #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\User\RiderProjects\reports-hometask\UnitTests" Presentation="&amp;lt;UnitTests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=TaskConsoleApp_002FConfigConstants/@EntryIndexedValue">False</s:Boolean>
