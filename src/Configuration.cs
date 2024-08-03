@@ -32,7 +32,7 @@ public static class Configuration
             .AddSingleton(appConfig)
             .AddSingleton(logger)
             .AddSingleton<ISessionReader, CsvSessionReader>()
-            .AddSingleton<ReportService>()
+            .AddSingleton<IReportService, ReportService>()
             .AddSingleton<ISessionService, SessionService>()
             .BuildServiceProvider();
     }

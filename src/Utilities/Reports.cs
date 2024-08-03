@@ -1,9 +1,10 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using TaskConsoleApp.Resources;
 
 namespace TaskConsoleApp.Utilities;
 
-public static class Reports
+public static partial class Reports
 {
     /// <summary>
     /// Получить максимальную ширину для столбца
@@ -68,4 +69,47 @@ public static class Reports
             StringConstants.Processing,
             StringConstants.Recall);
     }
+    
+    /// <summary>
+    /// Напечатать второй отчёт
+    /// </summary>
+    /// <param name="operatorStates">Состояния операторов</param>
+    /// <param name="columnWidths">Ширины столбцов</param>
+    public static void PrintSecondReport(Dictionary<string, Dictionary<string, TimeSpan>> operatorStates, 
+        (int nameWidth, int pauseWidth, int readyWidth, int talkWidth, int processingWidth, int recallWidth) columnWidths)
+    {
+        foreach (var (operatorName, states) in operatorStates)
+        {
+            if (!FullNameRegex.IsMatch(operatorName))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            
+            Console.WriteLine(
+                "{0,-" + columnWidths.nameWidth + "} " +
+                "{1," + columnWidths.pauseWidth + "} " +
+                "{2," + columnWidths.readyWidth + "} " +
+                "{3," + columnWidths.talkWidth + "} " +
+                "{4," + columnWidths.processingWidth + "} " +
+                "{5," + columnWidths.recallWidth + "}",
+                operatorName,
+                states[StringConstants.Pause].TotalSeconds,
+                states[StringConstants.Ready].TotalSeconds,
+                states[StringConstants.Talk].TotalSeconds,
+                states[StringConstants.Processing].TotalSeconds,
+                states[StringConstants.Recall].TotalSeconds);
+            
+            Console.ResetColor();
+        }
+
+        Console.WriteLine();
+    }
+    
+    [GeneratedRegex(@"^[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+$", RegexOptions.Compiled)]
+    private static partial Regex MyRegex();
+    
+    /// <summary>
+    /// Регулярное выражение для проверки на полное имя
+    /// </summary>
+    private static readonly Regex FullNameRegex = MyRegex();
 }

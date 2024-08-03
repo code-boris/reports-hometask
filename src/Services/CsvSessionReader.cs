@@ -27,6 +27,10 @@ public class CsvSessionReader(ITraceLogger logger) : ISessionReader
                         {
                             sessions.Add(session);
                         }
+                        else
+                        {
+                            logger.Log(string.Format(ConfigConstants.ErrorParsingLineFailureMessage, line, null));
+                        }
                     }
                     catch (Exception ex)
                     {

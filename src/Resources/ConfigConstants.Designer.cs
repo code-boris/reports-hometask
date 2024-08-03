@@ -152,7 +152,7 @@ namespace TaskConsoleApp.Resources {
         /// <summary>
         ///   Looks up a localized string similar to File not found: &apos;{0}&apos;.
         /// </summary>
-        internal static string FileNotFoundFailureMessage {
+        public static string FileNotFoundFailureMessage {
             get {
                 return ResourceManager.GetString("FileNotFoundFailureMessage", resourceCulture);
             }

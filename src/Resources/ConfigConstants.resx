@@ -76,4 +76,7 @@
         <value>{0:dd.MM.yyyy} {1}</value>
         <comment>Выводит максимум сессий по первому отчёту</comment>
     </data>
+    <data name="vvv" xml:space="preserve">
+        <value />
+    </data>
 </root>

@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using TaskConsoleApp.Interfaces;
+﻿using TaskConsoleApp.Interfaces;
 using TaskConsoleApp.Models;
 using TaskConsoleApp.Resources;
 using TaskConsoleApp.Utilities;
@@ -7,21 +6,11 @@ using TaskConsoleApp.Utilities;
 namespace TaskConsoleApp.Services;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-/// <summary>
-/// Сервис для составления отчётов
-/// </summary>
-/// <param name="logger">Экземпляр логгера</param>
-public partial class ReportService(ITraceLogger logger)
+
+/// <inheritdoc />
+public class ReportService(ITraceLogger logger) : IReportService
 {
-    /// <summary>
-    /// Регулярное выражение для проверки на полное имя
-    /// </summary>
-    private static readonly Regex FullNameRegex = MyRegex();
-    
-    /// <summary>
-    /// Сгенерировать первый отчёт
-    /// </summary>
-    /// <param name="sessions">Коллекция сеансов</param>
+    /// <inheritdoc />
     public async Task GenerateFirstReportAsync(IEnumerable<Session> sessions)
     {
         var dailySessions = GetDailySessions(sessions);
@@ -29,10 +18,22 @@ public partial class ReportService(ITraceLogger logger)
         var report = dailySessions.Select(d => new
         {
             Date = d.Key,
-            MaxConcurrentSessions = GetMaxConcurrentSessions(d.Value).Result
+            MaxConcurrentSessions = GetMaxConcurrentSessions(d.Value)
         });
 
         Reports.PrintFirstReport(report);
+    }
+    
+    /// <inheritdoc />
+    public async Task GenerateSecondReportAsync(IEnumerable<Session> sessions)
+    {
+        var operatorStates = GetOperatorStates(sessions);
+
+        var columnWidths = Reports.GetColumnWidths(operatorStates);
+
+        Reports.PrintSecondReportHeader(columnWidths);
+
+        Reports.PrintSecondReport(operatorStates, columnWidths);
     }
 
     /// <summary>
@@ -63,22 +64,7 @@ public partial class ReportService(ITraceLogger logger)
     }
 
     /// <summary>
-    /// Сгенерировать второй отчёт
-    /// </summary>
-    /// <param name="sessions">Данные по сессиям</param>
-    public async Task GenerateSecondReportAsync(IEnumerable<Session> sessions)
-    {
-        var operatorStates = GetOperatorStates(sessions);
-
-        var columnWidths = Reports.GetColumnWidths(operatorStates);
-
-        Reports.PrintSecondReportHeader(columnWidths);
-
-        PrintSecondReport(operatorStates, columnWidths);
-    }
-
-    /// <summary>
-    /// Обработать данные по сессиям (коллекции), чтобы сагрерировать общее время потраченное каждым оператором в различных состояниях (states).
+    /// Обработать данные по сеансам (коллекции), чтобы сагрерировать общее время потраченное каждым оператором в различных состояниях (states).
     /// </summary>
     /// <param name="sessions">Сессии</param>
     /// <returns>Словарь, где ключ - имена операторов, а значения - внутренний словарь (ключ - состояния, а значения - кумулятивная длительность)</returns>
@@ -123,41 +109,11 @@ public partial class ReportService(ITraceLogger logger)
     }
 
     /// <summary>
-    /// Напечатать второй отчёт
+    /// Вычислить максимальное количество одновременно активных сессий на основе списка временных интервалов 
     /// </summary>
-    /// <param name="operatorStates">Состояния операторов</param>
-    /// <param name="columnWidths">Ширины столбцов</param>
-    private static void PrintSecondReport(Dictionary<string, Dictionary<string, TimeSpan>> operatorStates, 
-        (int nameWidth, int pauseWidth, int readyWidth, int talkWidth, int processingWidth, int recallWidth) columnWidths)
-    {
-        foreach (var (operatorName, states) in operatorStates)
-        {
-            if (!FullNameRegex.IsMatch(operatorName))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-            }
-            
-            Console.WriteLine(
-                "{0,-" + columnWidths.nameWidth + "} " +
-                "{1," + columnWidths.pauseWidth + "} " +
-                "{2," + columnWidths.readyWidth + "} " +
-                "{3," + columnWidths.talkWidth + "} " +
-                "{4," + columnWidths.processingWidth + "} " +
-                "{5," + columnWidths.recallWidth + "}",
-                operatorName,
-                states[StringConstants.Pause].TotalSeconds,
-                states[StringConstants.Ready].TotalSeconds,
-                states[StringConstants.Talk].TotalSeconds,
-                states[StringConstants.Processing].TotalSeconds,
-                states[StringConstants.Recall].TotalSeconds);
-            
-            Console.ResetColor();
-        }
-
-        Console.WriteLine();
-    }
-
-    private async ValueTask<int> GetMaxConcurrentSessions(IEnumerable<(DateTime Start, DateTime End)> sessions)
+    /// <param name="sessions">Перечисление кортежей, где каждый кортеж содержит дату и время начала (Start) и конца (End) сессии</param>
+    /// <returns>Максимальное количество сессий, которые были активны одновременно в какой-то момент времени</returns>
+    private static int GetMaxConcurrentSessions(IEnumerable<(DateTime Start, DateTime End)> sessions)
     {
         var events = sessions
             .SelectMany(session => new[] { (session.Start, 1), (session.End, -1) })
@@ -176,8 +132,6 @@ public partial class ReportService(ITraceLogger logger)
 
         return maxConcurrent;
     }
-
-    [GeneratedRegex(@"^[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+$", RegexOptions.Compiled)]
-    private static partial Regex MyRegex();
 }
+
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously

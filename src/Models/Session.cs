@@ -7,48 +7,44 @@ namespace TaskConsoleApp.Models;
 /// <summary>
 /// Сессия
 /// </summary>
-public class Session
+public class Session(DateTime start, DateTime end, string project, string @operator, string state, TimeSpan duration)
 {
     /// <summary>
     /// Дата начала сессии
     /// </summary>
-    public DateTime Start { get; }
-    
+    public DateTime Start { get; } = start;
+
     /// <summary>
     /// Дата окончания сессии
     /// </summary>
-    public DateTime End { get; }
-    
+    public DateTime End { get; } = end;
+
     /// <summary>
     /// Название проекта
     /// </summary>
-    public string Project { get; }
-    
+    public string Project { get; } = project;
+
     /// <summary>
     /// Наименование оператора
     /// </summary>
-    public string Operator { get; }
-    
+    public string Operator { get; } = @operator;
+
     /// <summary>
     /// Город
     /// </summary>
-    public string State { get; }
-    
+    public string State { get; } = state;
+
     /// <summary>
     /// Длительность
     /// </summary>
-    public TimeSpan Duration { get; }
+    public TimeSpan Duration { get; } = duration;
 
-    private Session(DateTime start, DateTime end, string project, string @operator, string state, TimeSpan duration)
-    {
-        Start = start;
-        End = end;
-        Project = project;
-        Operator = @operator;
-        State = state;
-        Duration = duration;
-    }
-
+    /// <summary>
+    /// Создать объект сессии на основе CSV файла
+    /// </summary>
+    /// <param name="csvLine"></param>
+    /// <param name="logger"></param>
+    /// <returns></returns>
     public static Session? Create(string csvLine, ITraceLogger logger)
     {
         try

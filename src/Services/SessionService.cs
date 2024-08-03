@@ -5,7 +5,7 @@ using TaskConsoleApp.Resources;
 namespace TaskConsoleApp.Services;
 
 /// <inheritdoc />
-public class SessionService(ISessionReader sessionReader, ReportService reportService, ITraceLogger logger) : ISessionService
+public class SessionService(ISessionReader sessionReader, IReportService reportService, ITraceLogger logger) : ISessionService
 {
     /// <inheritdoc />
     public async Task GenerateReportAsync(string? inputFilePath)
